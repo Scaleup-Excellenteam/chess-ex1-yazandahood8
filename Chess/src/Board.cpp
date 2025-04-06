@@ -3,7 +3,10 @@
 #include "King.h"
 
 Board::Board(const std::string& initialState) {
-    grid.resize(8, std::vector<std::unique_ptr<Piece>>(8, nullptr));
+    grid.resize(8);
+    for (int i = 0; i < 8; ++i)
+        grid[i].resize(8); // פשוט לא מכניס שום פוינטר, יוצר nullptr
+
     for (int i = 0; i < 64; ++i) {
         char c = initialState[i];
         if (c == '#') continue;
@@ -15,6 +18,7 @@ Board::Board(const std::string& initialState) {
         switch (tolower(c)) {
             case 'r': grid[row][col] = std::make_unique<Rook>(isWhite); break;
             case 'k': grid[row][col] = std::make_unique<King>(isWhite); break;
+            // תוסיף עוד כלים כאן אם תפתח בהמשך
         }
     }
 }
