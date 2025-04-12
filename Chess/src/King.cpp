@@ -8,7 +8,7 @@ bool King::is_legel_movement(const std::string &input, const std::string &board,
     int row_from = 8 - (input[1] - '0');
     int col_to = input[2] - 'a';
     int row_to = 8 - (input[3] - '0');
-
+//
     int dx = std::abs(col_to - col_from);
     int dy = std::abs(row_to - row_from);
 
