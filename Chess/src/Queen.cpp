@@ -1,48 +1,37 @@
 #include "Queen.h"
+#include <string>
+#include <cmath>
+#include <cctype>
 
-bool Queen::is_legel_movement(const string &input, const string &board, bool isWhiteTurn) {
-    int fromCol = input[0] - 'a';
-    int fromRow = 8 - (input[1] - '0');
-    int toCol = input[2] - 'a';
-    int toRow = 8 - (input[3] - '0');
+bool Queen::is_legel_movement(const std::string &input, const std::string &board, bool isWhiteTurn) {
+    int col_source = input[0] - 'a';
+    int row_source = 8 - (input[1] - '0');
+    int col_dest = input[2] - 'a';
+    int row_dest = 8 - (input[3] - '0');
 
-    int rowDiff = toRow - fromRow;
-    int colDiff = toCol - fromCol;
+    int row_diff = row_dest - row_source;
+    int col_diff = col_dest - col_source;
 
-    int rowStep = (rowDiff == 0) ? 0 : (rowDiff > 0 ? 1 : -1);
-    int colStep = (colDiff == 0) ? 0 : (colDiff > 0 ? 1 : -1);
+    int row_step = (row_diff == 0) ? 0 : (row_diff > 0 ? 1 : -1);
+    int col_step = (col_diff == 0) ? 0 : (col_diff > 0 ? 1 : -1);
 
-    // Queen can move straight or diagonal
-    if (!(fromRow == toRow || fromCol == toCol || abs(rowDiff) == abs(colDiff))) {
+    if (!(row_source == row_dest || col_source == col_dest || std::abs(row_diff) == std::abs(col_diff)))
         return false;
-    }
 
-    int r = fromRow + rowStep;
-    int c = fromCol + colStep;
+    int current_row = row_source + row_step;
+    int current_col = col_source + col_step;
 
-    // Check if path is clear
-    while (r != toRow || c != toCol) {
-        if (board[r * 8 + c] != '#') {
+    while (current_row != row_dest || current_col != col_dest) {
+        if (board[current_row * 8 + current_col] != '#')
             return false;
-        }
-        r += rowStep;
-        c += colStep;
+        current_row += row_step;
+        current_col += col_step;
     }
 
-    char target = board[toRow * 8 + toCol];
-
-    // Can move if square is empty or has opponent piece
-    if (target == '#') {
-        return true;
-    }
-
-    if (isWhiteTurn && isupper(target)) {
-        return false;
-    }
-
-    if (!isWhiteTurn && islower(target)) {
-        return false;
-    }
+    char destPiece = board[row_dest * 8 + col_dest];
+    if (destPiece == '#') return true;
+    if (isWhiteTurn && std::isupper(destPiece)) return false;
+    if (!isWhiteTurn && std::islower(destPiece)) return false;
 
     return true;
 }
