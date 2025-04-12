@@ -8,7 +8,7 @@ protected:
     bool isWhite;
 
 public:
-    Piece(bool isWhite); // רק הצהרה
+    Piece(bool isWhite);
     virtual ~Piece() = default;
 
     bool isWhitePiece() const { return isWhite; }
