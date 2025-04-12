@@ -1,27 +1,27 @@
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required(VERSION 3.15)
 
-project (Chess)
+project(Chess)
 
-# Standard version logic
+# Set C++ version
 if (MSVC AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
     set(CMAKE_CXX_STANDARD 23)
-else ()
+else()
     set(CMAKE_CXX_STANDARD 20)
-endif ()
+endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Compiler flags for MSVC
+# Extra flags for Visual Studio compiler
 if (MSVC)
-    add_compile_options (/W4 /permissive- /Zc:externConstexpr /Zc:inline)
-endif ()
+    add_compile_options(/W4 /permissive- /Zc:externConstexpr /Zc:inline)
+endif()
 
-# Include headers
+# Add include directory
 include_directories(include)
 
-# Gather all source files from src/
+# Add all source files from src folder
 file(GLOB SOURCES src/*.cpp)
 
-# Create the executable with all sources
+# Build the executable
 add_executable(Chess ${SOURCES})
