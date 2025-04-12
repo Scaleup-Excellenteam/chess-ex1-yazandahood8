@@ -1,7 +1,7 @@
 #ifndef CHESS_BISHOP_H
 #define CHESS_BISHOP_H
-#include <string>
 
+#include <string>
 #include "Piece.h"
 
 class Bishop : public Piece {
@@ -9,7 +9,7 @@ private:
     char type;
 
 public:
-    Bishop(char t) {
+    Bishop(char t, bool isWhite) : Piece(isWhite) {
         type = t;
     }
 
