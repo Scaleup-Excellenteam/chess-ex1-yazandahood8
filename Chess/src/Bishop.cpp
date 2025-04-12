@@ -13,7 +13,7 @@ bool Bishop::is_legel_movement(const std::string &input, const std::string &boar
     if (abs(rowDiff) != abs(colDiff)) {
         return false;
     }
-
+//
     int rowStep = (rowDiff > 0) ? 1 : -1;
     int colStep = (colDiff > 0) ? 1 : -1;
 
