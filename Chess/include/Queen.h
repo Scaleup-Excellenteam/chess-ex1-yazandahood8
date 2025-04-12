@@ -9,7 +9,7 @@ private:
     char type;
 
 public:
-    Queen(char t) {
+    Queen(char t, bool isWhite) : Piece(isWhite) {
         type = t;
     }
 
