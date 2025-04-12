@@ -1,17 +1,21 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-class Board;
+#include <string>
+using namespace std;
 
 class Piece {
 protected:
     bool isWhite;
+
 public:
     Piece(bool isWhite) : isWhite(isWhite) {}
     virtual ~Piece() {}
+
     bool isWhitePiece() const { return isWhite; }
-    virtual char getSymbol() const = 0;
-    virtual bool isValidMove(int sx, int sy, int dx, int dy, const Board& board) const = 0;
+
+    virtual bool is_legel_movement(const string &input, const string &board, bool isWhiteTurn) = 0;
+    virtual char get_type() = 0;
 };
 
-#endif
+#endif // PIECE_H
