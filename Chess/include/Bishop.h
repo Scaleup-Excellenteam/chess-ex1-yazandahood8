@@ -1,5 +1,6 @@
 #ifndef CHESS_BISHOP_H
 #define CHESS_BISHOP_H
+#include <string>
 
 #include "Piece.h"
 
