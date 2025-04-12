@@ -16,7 +16,20 @@ int Game::tryMove(const std::string& from, const std::string& to) {
     Piece* target = board.get(dx, dy);
     if (target && target->isWhitePiece() == whiteTurn) return 13;
 
-    if (!piece->isValidMove(sx, sy, dx, dy, board)) return 21;
+    // צור את input בפורמט e2e4
+    std::string moveStr = from + to;
+
+    // המרת מצב הלוח למחרוזת (64 תווים)
+    std::string boardStr;
+    boardStr.reserve(64);
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            Piece* p = board.get(i, j);
+            boardStr += (p ? p->get_type() : '#');
+        }
+    }
+
+    if (!piece->is_legel_movement(moveStr, boardStr, whiteTurn)) return 21;
 
     board.move(sx, sy, dx, dy);
     whiteTurn = !whiteTurn;
