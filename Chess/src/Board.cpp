@@ -16,8 +16,8 @@ Board::Board(const std::string& initialState) {
         bool isWhite = isupper(c);
 
         switch (tolower(c)) {
-            case 'r': grid[row][col] = std::make_unique<Rook>(isWhite); break;
-            case 'k': grid[row][col] = std::make_unique<King>(isWhite); break;
+            case 'r': grid[row][col] = std::make_unique<Rook>(c, isWhite); break;
+            case 'k': grid[row][col] = std::make_unique<King>(c, isWhite); break;
             // תוסיף עוד כלים כאן אם תפתח בהמשך
         }
     }
