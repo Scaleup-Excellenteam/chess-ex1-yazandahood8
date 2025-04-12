@@ -2,19 +2,18 @@
 #define PIECE_H
 
 #include <string>
-using namespace std;
 
 class Piece {
 protected:
     bool isWhite;
 
 public:
-    Piece(bool isWhite) : isWhite(isWhite) {}
-    virtual ~Piece() {}
+    Piece(bool isWhite); // רק הצהרה
+    virtual ~Piece() = default;
 
     bool isWhitePiece() const { return isWhite; }
 
-    virtual bool is_legel_movement(const string &input, const string &board, bool isWhiteTurn) = 0;
+    virtual bool is_legel_movement(const std::string &input, const std::string &board, bool isWhiteTurn) = 0;
     virtual char get_type() = 0;
 };
 
