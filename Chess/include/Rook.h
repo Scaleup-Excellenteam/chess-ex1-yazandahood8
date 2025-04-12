@@ -2,12 +2,20 @@
 #define ROOK_H
 
 #include "Piece.h"
+#include <string>
 
 class Rook : public Piece {
+private:
+    char type;
+
 public:
-    Rook(bool isWhite) : Piece(isWhite) {}
-    char getSymbol() const override { return isWhite ? 'R' : 'r'; }
-    bool isValidMove(int sx, int sy, int dx, int dy, const Board& board) const override;
+    Rook(char t, bool isWhite) : Piece(isWhite) {
+        type = t;
+    }
+
+    bool is_legel_movement(const std::string &input, const std::string &board, bool isWhiteTurn) override;
+
+    char get_type() override;
 };
 
-#endif
+#endif // ROOK_H
