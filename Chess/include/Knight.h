@@ -1,5 +1,6 @@
 #ifndef CHESS_KNIGHT_H
 #define CHESS_KNIGHT_H
+#include <string>
 
 #include "Piece.h"
 
