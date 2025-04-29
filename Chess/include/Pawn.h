@@ -1,11 +1,11 @@
-#ifndef KNIGHT_H
-#define KNIGHT_H
+#ifndef PAWN_H
+#define PAWN_H
 
 #include "Piece.h"
 
-class Knight : public Piece {
+class Pawn : public Piece {
 public:
-    Knight(bool isWhite);
+    Pawn(bool isWhite);
     char getSymbol() const override;
     bool isValidMove(int sx, int sy, int dx, int dy, const Board& board) const override;
 };

@@ -1,39 +1,14 @@
 #include "Knight.h"
+#include "Board.h"
 #include <cmath>
-#include <cctype>
-#include <string> 
-bool Knight::is_legel_movement(const std::string &input, const std::string &board, bool isWhiteTurn) {
-    int fromCol = input[0] - 'a';
-    int fromRow = 8 - (input[1] - '0');
-    int toCol = input[2] - 'a';
-    int toRow = 8 - (input[3] - '0');
 
-    int dx = std::abs(toCol - fromCol);
-    int dy = std::abs(toRow - fromRow);
+Knight::Knight(bool isWhite) : Piece(isWhite) {}
 
-    // Knight moves in L-shape: 2 by 1 or 1 by 2
-    if (!((dx == 2 && dy == 1) || (dx == 1 && dy == 2))) {
-        return false;
-    }
-
-    char target = board[toRow * 8 + toCol];
-
-    // Can move if square is empty or has enemy piece
-    if (target == '#') {
-        return true;
-    }
-
-    if (isWhiteTurn && std::isupper(target)) {
-        return false;
-    }
-
-    if (!isWhiteTurn && std::islower(target)) {
-        return false;
-    }
-
-    return true;
+char Knight::getSymbol() const {
+    return isWhite ? 'N' : 'n';
 }
 
-char Knight::get_type() {
-    return type;
+bool Knight::isValidMove(int sx, int sy, int dx, int dy, const Board& board) const {
+    int dxAbs = std::abs(sx - dx), dyAbs = std::abs(sy - dy);
+    return (dxAbs == 2 && dyAbs == 1) || (dxAbs == 1 && dyAbs == 2);
 }
