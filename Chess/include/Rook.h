@@ -6,7 +6,7 @@ class Rook: public Piece {
     public:
         Rook(bool isWhite): Piece(isWhite) {}
         ~Rook() {}
-        bool isLegalMove(int, int, int, int, Piece *boardMove[8][8]) override;
+        bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
     private:
         char getPiece() const override { return isWhite ? 'R' : 'r'; }
 
