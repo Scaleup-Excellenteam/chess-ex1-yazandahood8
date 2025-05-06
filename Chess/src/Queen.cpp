@@ -1,7 +1,7 @@
 #include "Queen.h"
 #include "Rook.h"
 #include "Bishop.h"
-#include "MoveValidator.h"
+#include "ValidatMove.h"
 
 bool Queen::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* board[8][8]) {
     return MoveValidator::isStraightPathClear(srcRow, srcCol, destRow, destCol, board) ||
