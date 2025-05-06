@@ -1,4 +1,4 @@
-#include "MoveValidator.h"
+#include "ValidatMove.h"
 
 bool MoveValidator::isStraightPathClear(int srcRow, int srcCol, int destRow, int destCol, Piece* board[8][8]) {
     if (srcRow == destRow) {
