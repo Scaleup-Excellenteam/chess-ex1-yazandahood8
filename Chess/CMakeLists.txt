@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 3.10)
-
 project(ChessGame)
 
-# Set the C++ standard
+# Set C++ version
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add all source files
-file(GLOB SOURCES
-    *.cpp
-)
+# Include directories for headers
+include_directories(include)
+
+# Collect all .cpp files in src/
+file(GLOB SOURCES "src/*.cpp")
 
 # Create the executable
 add_executable(Chess ${SOURCES})
 
-# Include headers from the current directory
-target_include_directories(Chess PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# Optional: show all warnings
+target_compile_options(Chess PRIVATE -Wall -Wextra -pedantic)
