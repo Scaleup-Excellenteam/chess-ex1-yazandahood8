@@ -3,9 +3,11 @@
 #include "Bishop.h"
 #include "ValidatMove.h"
 
-bool Queen::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* board[8][8]) {
-    return MoveValidator::isStraightPathClear(srcRow, srcCol, destRow, destCol, board) ||
-           MoveValidator::isDiagonalPathClear(srcRow, srcCol, destRow, destCol, board);
+bool Queen::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* boardMove[8][8]) {
+    Rook rookHelper(isWhite, row, col);
+    Bishop bishopHelper(isWhite, row, col);
+    return rookHelper.isLegalMove(destRow, destCol, boardMove) ||
+           bishopHelper.isLegalMove(destRow, destCol, boardMove);
 }
 
     return rookHelper.isLegalMove(srcRow, srcCol, destRow, destCol, boardMove) ||
