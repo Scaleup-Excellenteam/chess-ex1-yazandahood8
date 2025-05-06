@@ -1,4 +1,4 @@
-#include "ValidatGame.h"
+#include "GameValidator.h"
 #include "Board.h"
 #include "Piece.h"
 #include "Knight.h"
