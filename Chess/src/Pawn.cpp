@@ -1,6 +1,8 @@
 #include "Pawn.h"
 #include <cmath>
-
+bool Pawn::isLegalMove(int destRow, int destCol, Piece* board[8][8]) {
+    return areSquaresLegal(row, col, destRow, destCol, board);
+}
 bool Pawn::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* boardMove[8][8]) {
     if (destRow < 0 || destRow >= 8 || destCol < 0 || destCol >= 8)
         return false;
