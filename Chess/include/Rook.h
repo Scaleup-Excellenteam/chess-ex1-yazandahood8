@@ -2,12 +2,10 @@
 
 #include "Piece.h"
 
-class Rook: public Piece {
-    public:
-        Rook(bool isWhite): Piece(isWhite) {}
-        ~Rook() {}
-        bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
-    private:
-        char getPiece() const override { return isWhite ? 'R' : 'r'; }
-
+class Rook : public Piece {
+public:
+    Rook(bool isWhite, int row, int col) : Piece(isWhite, row, col) {}
+    char getPiece() const override { return isWhite ? 'R' : 'r'; }
+    bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
 };
+
