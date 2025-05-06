@@ -3,9 +3,7 @@
 
 class Pawn : public Piece {
 public:
-    Pawn(bool isWhite) : Piece(isWhite) {}
-    ~Pawn() {}
-    bool areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* boardMove[8][8]) override;
-private:
+    Pawn(bool isWhite, int row, int col) : Piece(isWhite, row, col) {}
     char getPiece() const override { return isWhite ? 'P' : 'p'; }
+    bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
 };

@@ -1,13 +1,9 @@
 #pragma once
-#include "Chess.h"
 #include "Piece.h"
 
 class King : public Piece {
-    public:
-        King(bool isWhite): Piece(isWhite) {}
-        ~King() {}
-        bool isLegalMove(int, int, int, int, Piece *boardMove[8][8]) override;
-    private:
-        char getPiece() const override { return isWhite ? 'K' : 'k'; }
-
+public:
+    King(bool isWhite, int row, int col) : Piece(isWhite, row, col) {}
+    char getPiece() const override { return isWhite ? 'K' : 'k'; }
+    bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
 };
