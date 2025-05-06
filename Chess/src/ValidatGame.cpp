@@ -4,43 +4,36 @@
 #include "Knight.h"
 
 int validateMove(const std::string& move, std::string& board, bool turn) {
-    int srcRow = move[0] - 'a';
-    int srcCol = move[1] - '1';
-    int destRow = move[2] - 'a';
-    int destCol = move[3] - '1';
+    int srcCol = move[0] - 'a'; // column (letter)
+    int srcRow = move[1] - '1'; // row (number)
+    int destCol = move[2] - 'a';
+    int destRow = move[3] - '1';
 
     Board boardObj;
     boardObj.loadFromString(board);
 
-    Piece* srcPiece = boardObj.boardMove[srcRow][srcCol];
-    Piece* destPiece = boardObj.boardMove[destRow][destCol];
+    Piece* srcPiece = boardObj.boardMove[srcRow][srcCol].get();
+    Piece* destPiece = boardObj.boardMove[destRow][destCol].get();
 
-    // No piece at source
     if (!srcPiece)
-        return 11;
+        return 11; // No piece at source
 
-    // Turn mismatch
     if (srcPiece->getColor() != turn)
-        return 12;
+        return 12; // Turn mismatch
 
-    // Can't capture own piece
     if (destPiece && destPiece->getColor() == srcPiece->getColor())
-        return 13;
+        return 13; // Can't capture own piece
 
-    // Validate move legality
-    if (dynamic_cast<Knight*>(srcPiece)) {
-        if (!srcPiece->isLegalMove(destRow, destCol))
-            return 21;
-    } else {
-        if (!srcPiece->isLegalMove(destRow, destCol, boardObj.boardMove))
-            return 21;
-    }
+    // Always pass 3 arguments: legal check needs the board
+    Piece* const* const* rawBoard = boardObj.getRawBoard();
+    if (!srcPiece->isLegalMove(destRow, destCol, (Piece* (*)[8])rawBoard))
+        return 21; // Illegal move
 
     // Apply move
     srcPiece->setPosition(destRow, destCol);
-    boardObj.boardMove[destRow][destCol] = srcPiece;
+    boardObj.boardMove[destRow][destCol] = std::move(boardObj.boardMove[srcRow][srcCol]);
     boardObj.boardMove[srcRow][srcCol] = nullptr;
 
     board = boardObj.getBoardString();
-    return 42;
+    return 42; // Success
 }
