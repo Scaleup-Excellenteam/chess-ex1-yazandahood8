@@ -8,6 +8,6 @@ bool Queen::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Pi
            MoveValidator::isDiagonalPathClear(srcRow, srcCol, destRow, destCol, board);
 }
 
-    return rookHelper.areSquaresLegal(srcRow, srcCol, destRow, destCol, boardMove) ||
-           bishopHelper.areSquaresLegal(srcRow, srcCol, destRow, destCol, boardMove);
+    return rookHelper.isLegalMove(srcRow, srcCol, destRow, destCol, boardMove) ||
+           bishopHelper.isLegalMove(srcRow, srcCol, destRow, destCol, boardMove);
 }
