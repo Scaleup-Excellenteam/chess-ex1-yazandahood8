@@ -1,6 +1,7 @@
 #include "Chess.h"
 #include <iostream>
 #include <string>
+#include <chrono>              
 
 using namespace std;
 
@@ -327,4 +328,38 @@ void Chess::setCodeResponse(int codeResponse)
 		((21 == codeResponse) || (codeResponse == 31)) ||
 		((41 == codeResponse) || (codeResponse == 42)))
 		m_codeResponse = codeResponse;
+}
+
+
+
+void Chess::computeBestMoves(int depth, bool autoPlay, size_t numThreads) {
+    ThreadPool pool(numThreads);
+    // collect this turn’s pieces (you’ll need a getter)
+    auto pieces = board.getPieces(m_turn);
+    for (size_t i = 0; i < pieces.size(); ++i) {
+        pool.enqueue([this, &pieces, i, depth]() {
+            Move best = computeBestMoveForPiece(pieces[i], depth);
+            m_sharedQueue.push(best);
+        });
+    }
+    pool.shutdown();
+}
+
+void Chess::run(int depth, bool autoPlay, size_t numThreads) {
+    if (autoPlay) {
+        // benchmark / auto-play 8 moves
+        for (int i = 0; i < 8; ++i) {
+            computeBestMoves(depth, true, numThreads);
+            Move best = m_sharedQueue.poll();
+            applyMove(best);           // you’ll need a helper to mutate m_boardString
+        }
+    } else {
+        // manual play
+        while (true) {
+            string input = getInput();
+            if (input == "exit") break;
+            int code = GameValidator::validate(/*…*/);
+            setCodeResponse(code);
+        }
+    }
 }
