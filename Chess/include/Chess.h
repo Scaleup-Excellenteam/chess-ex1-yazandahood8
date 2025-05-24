@@ -10,6 +10,7 @@
 #include "PriorityQueue.h"
 #include "Move.h"        // define your Move struct/class
 #include "MoveComparator.h" // comparator for Move priority
+#include <atomic>
 
 using std::cout;
 using std::cin; 
@@ -19,6 +20,8 @@ using std::string;
 const int _SIZE = 21;
 
 class Chess {
+std::atomic<bool>   m_thresholdReached{false};
+  int                 m_scoreThreshold{0};
     unsigned char m_board[_SIZE][_SIZE] = { 0 };
     bool m_turn = true;
     string m_boardString;
@@ -42,8 +45,7 @@ class Chess {
     void execute();
     void doTurn();
 
-    // Internal: compute best moves using thread pool
-    void computeBestMoves(int depth, bool autoPlay, size_t numThreads);
+   void computeBestMoves(int depth, bool autoPlay, size_t numThreads, int scoreThreshold);
 
 public:
     Chess(const string& start = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr");
@@ -53,6 +55,6 @@ public:
     string getInput();
     void setCodeResponse(int codeResponse);
     
-    // Public API to start a game loop, with optional auto-play
-    void run(int depth, bool autoPlay, size_t numThreads);
+    void run(int depth, bool autoPlay, size_t numThreads, int scoreThreshold);
+
 };
