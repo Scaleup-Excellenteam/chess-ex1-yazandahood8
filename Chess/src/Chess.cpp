@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <chrono>              
+#include <limits>    // for INT_MIN
 
 using namespace std;
 
@@ -330,20 +331,62 @@ void Chess::setCodeResponse(int codeResponse)
 		m_codeResponse = codeResponse;
 }
 
+Move Chess::computeBestMoveForPiece(const Piece& p, int depth) {
+    Move bestMove;
+    int  bestScore = std::numeric_limits<int>::min();
+    auto candidates = generateMovesForPiece(p);
+    for (auto& m : candidates) {
+        // **early check**: if someone else already hit threshold, bail out
+        if (m_thresholdReached.load())
+            break;
+
+        int score = evaluateMove(m, depth);
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = m;
+        }
+        // **if this move crosses YOUR threshold**, signal everybody else
+        if (score >= m_scoreThreshold) {
+            m_thresholdReached.store(true);
+            break;
+        }
+    }
+    bestMove.score = bestScore;  // make sure your Move struct carries it
+    return bestMove;
+}
 
 
-void Chess::computeBestMoves(int depth, bool autoPlay, size_t numThreads) {
+void Chess::computeBestMoves(int depth, bool autoPlay, size_t numThreads, int scoreThreshold) {
+    // reset the flag & store the threshold
+    m_thresholdReached.store(false);
+    m_scoreThreshold = scoreThreshold;
+
     ThreadPool pool(numThreads);
-    // collect this turn’s pieces (you’ll need a getter)
     auto pieces = board.getPieces(m_turn);
+
     for (size_t i = 0; i < pieces.size(); ++i) {
         pool.enqueue([this, &pieces, i, depth]() {
+            // if someone already hit the threshold, skip entirely
+            if (m_thresholdReached.load()) 
+                return;
+
             Move best = computeBestMoveForPiece(pieces[i], depth);
-            m_sharedQueue.push(best);
+
+            // after computing, if THIS move tops the threshold, set the flag
+            if (best.score >= m_scoreThreshold) {
+                m_thresholdReached.store(true);
+            }
+
+            // only push if we haven’t already exceeded—avoids flooding the queue
+            if (!m_thresholdReached.load() || best.score >= m_scoreThreshold) {
+                m_sharedQueue.push(best);
+            }
         });
     }
+
     pool.shutdown();
 }
+
 
 void Chess::run(int depth, bool autoPlay, size_t numThreads) {
     if (autoPlay) {
