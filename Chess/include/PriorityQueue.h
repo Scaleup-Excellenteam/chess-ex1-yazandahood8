@@ -4,15 +4,13 @@
 template <typename T, typename Comparator>
 class PriorityQueue {
 private:
+    Node* head;
+    Comparator comp;
     struct Node {
         T value;
         Node* next;
         Node(T val) : value(val), next(nullptr) {}
     };
-
-    Node* head;
-    Comparator comp;
-
 public:
     PriorityQueue() : head(nullptr) {}
     ~PriorityQueue() {
