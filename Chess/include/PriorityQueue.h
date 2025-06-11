@@ -9,15 +9,17 @@
 template <typename T, typename Comparator>
 class PriorityQueue {
 private:
+    Node* head;
+    Comparator comp;
     struct Node {
         T value;
         Node* next;
         Node(const T& val) : value(val), next(nullptr) {}
     };
-
     Node* head;
     Comparator comp;
     mutable std::mutex pqMutex;
+
 
 public:
     PriorityQueue()
