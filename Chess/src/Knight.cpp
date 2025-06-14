@@ -8,5 +8,5 @@ bool Knight::isLegalMove(int destRow, int destCol, Piece* /*board*/[8][8]) {
     return (dRow == 2 && dCol == 1) || (dRow == 1 && dCol == 2);
 }
 Piece *Knight::clone() const {
-    return new Knight(color, column, row);
+    return new Knight(color, row, column);
 }
