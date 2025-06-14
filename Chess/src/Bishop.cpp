@@ -23,3 +23,7 @@ bool Bishop::isLegalMove(int destRow, int destCol, Piece* board[8][8]) {
 
     return true;
 }
+Piece *Bishop::clone() const {
+    //Clone the new Object of Bishop
+    return new Bishop(color, column, row);
+}
