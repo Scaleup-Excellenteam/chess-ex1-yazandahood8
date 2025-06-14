@@ -9,6 +9,7 @@ public:
     int getRow() const { return row; }
     int getCol() const { return col; }
     void setPosition(int r, int c) { row = r; col = c; }
+    virtual Piece* clone() const = 0;
 
     virtual char getPiece() const = 0;
 
