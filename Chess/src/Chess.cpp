@@ -398,9 +398,10 @@ void Chess::run(int depth, bool autoPlay, size_t numThreads) {
         }
     } else {
         // manual play
-        while (true) {
+	    bool flag=true;
+        while (flag) {
             string input = getInput();
-            if (input == "exit") break;
+            if (input == "exit") flag=false;
             int code = GameValidator::validate(/*…*/);
             setCodeResponse(code);
         }
