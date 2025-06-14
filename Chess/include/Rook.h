@@ -8,4 +8,6 @@ public:
 
     bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
     bool areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* board[8][8]); // ADDED
+    Piece * clone() const override;
+
 };
