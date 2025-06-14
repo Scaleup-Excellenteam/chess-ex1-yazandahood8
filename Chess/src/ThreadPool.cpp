@@ -2,12 +2,12 @@
 
 ThreadPool::ThreadPool(size_t numThreads)
 {
-    stopFlag = false;
+    isStopping = false;
+    activeTaskCount = 0;
 
-    for (size_t i = 0; i < numThreads; ++i) {
-        std::thread worker;
-        worker = std::thread(&ThreadPool::workerLoop, this);
-        workers.push_back(std::move(worker));
+    for (size_t i = 0; i < numThreads; ++i)
+    {
+        workerThreads.emplace_back(&ThreadPool::workerLoop, this);
     }
 }
 
@@ -18,70 +18,84 @@ ThreadPool::~ThreadPool()
 
 void ThreadPool::enqueue(std::function<void()> task)
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
-    tasks.push(std::move(task));
-    cv.notify_one();
+    {
+        std::lock_guard<std::mutex> guard(taskQueueMutex);
+        taskQueue.push(std::move(task));
+    }
+
+    taskAvailable.notify_one();
 }
 
 void ThreadPool::workerLoop()
 {
-    while (true) {
+    while (true)
+    {
         std::function<void()> task;
 
         {
-            std::unique_lock<std::mutex> lock(queueMutex);
+            std::unique_lock<std::mutex> lock(taskQueueMutex);
 
-            cv.wait(lock, [this] {
-                bool shouldWake = false;
-
-                {
-                    std::lock_guard<std::mutex> stopLock(stopMutex);
-                    if (stopFlag || !tasks.empty()) {
-                        shouldWake = true;
-                    }
-                }
-
-                return shouldWake;
+            taskAvailable.wait(lock, [this]()
+            {
+                std::lock_guard<std::mutex> stopGuard(stopMutex);
+                return isStopping || !taskQueue.empty();
             });
 
-            bool shouldExit = false;
-
+            if (isStopping && taskQueue.empty())
             {
-                std::lock_guard<std::mutex> stopLock(stopMutex);
-                if (stopFlag && tasks.empty()) {
-                    shouldExit = true;
-                }
-            }
-
-            if (shouldExit) {
                 return;
             }
 
-            task = std::move(tasks.front());
-            tasks.pop();
+            task = std::move(taskQueue.front());
+            taskQueue.pop();
         }
 
+        {
+            std::lock_guard<std::mutex> activeLock(activeMutex);
+            ++activeTaskCount;
+        }
+
+        // Execute the task
         task();
+
+        {
+            std::lock_guard<std::mutex> activeLock(activeMutex);
+            --activeTaskCount;
+        }
+
+        // Notify in case wait_for_all is waiting
+        idleCondition.notify_all();
     }
+}
+
+void ThreadPool::wait_for_all()
+{
+    std::unique_lock<std::mutex> lock(activeMutex);
+
+    idleCondition.wait(lock, [this]()
+    {
+        std::lock_guard<std::mutex> queueGuard(taskQueueMutex);
+        return taskQueue.empty() && activeTaskCount == 0;
+    });
 }
 
 void ThreadPool::shutdown()
 {
     {
-        std::lock_guard<std::mutex> lock1(queueMutex);
-        std::lock_guard<std::mutex> lock2(stopMutex);
-        stopFlag = true;
+        std::lock_guard<std::mutex> queueLock(taskQueueMutex);
+        std::lock_guard<std::mutex> stopLock(stopMutex);
+        isStopping = true;
     }
 
-    cv.notify_all();
+    taskAvailable.notify_all();
 
-    for (size_t i = 0; i < workers.size(); ++i) {
-        std::thread& t = workers[i];
-
-        if (t.joinable()) {
-            t.join();
+    for (auto& thread : workerThreads)
+    {
+        if (thread.joinable())
+        {
+            thread.join();
         }
     }
 
-    workers.clear();
+    workerThreads.clear();
 }
