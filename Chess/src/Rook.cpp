@@ -23,3 +23,6 @@ bool Rook::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Pie
 bool Rook::isLegalMove(int destRow, int destCol, Piece* board[8][8]) {
     return areSquaresLegal(row, col, destRow, destCol, board);
 }
+Piece *Rook::clone() const {
+    return new Rook(color,row,col);
+}
