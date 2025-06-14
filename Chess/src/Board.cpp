@@ -102,3 +102,14 @@ void Board::suggestBestMove(bool isWhiteTurn, int depth) {
 
     std::cout << "Top Suggested Moves:\n" << pq << std::endl;
 }
+Board *Board::clone() {
+    Board* Board2 = new Board();
+    Board2->board.resize(this->board.size(), vector<Piece*>(this->board[0].size(), nullptr));
+    for (int i = 0; i < board.size(); i++) {
+        for (int j = 0; j < board[i].size(); col++) {
+                Board2->board[i][j] = board[i][j]->clone();
+        }
+    }
+    return Board2;
+}
+
