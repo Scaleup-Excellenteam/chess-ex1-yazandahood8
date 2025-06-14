@@ -13,6 +13,8 @@ public:
 
     void enqueue(std::function<void()> task);
     void shutdown();
+    void wait_Threads();
+
 
 private:
     void workerLoop();

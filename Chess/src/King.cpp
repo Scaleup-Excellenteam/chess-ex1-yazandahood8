@@ -6,3 +6,6 @@ bool King::isLegalMove(int destRow, int destCol, Piece* board[8][8]) {
     int colDiff = std::abs(destCol - col);
     return (rowDiff <= 1 && colDiff <= 1);
 }
+Piece *King::clone() const {
+    return new King(color, column, row);
+}

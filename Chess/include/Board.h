@@ -46,4 +46,6 @@ public:
 
     Board(const Board&) = delete;
     Board& operator=(const Board&) = delete;
+    Board* clone();
+
 };

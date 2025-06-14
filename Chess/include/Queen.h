@@ -7,4 +7,6 @@ public:
     char getPiece() const override { return isWhite ? 'Q' : 'q'; }
     bool isLegalMove(int destRow, int destCol, Piece* board[8][8]) override;
     bool areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* board[8][8]);
+    Piece * clone() const override;
+
 };

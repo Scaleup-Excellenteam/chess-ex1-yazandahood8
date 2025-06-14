@@ -31,3 +31,6 @@ bool Pawn::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Pie
 
     return false;
 }
+Piece *Pawn::clone() const {
+    return new Pawn(color, row, column);
+}
