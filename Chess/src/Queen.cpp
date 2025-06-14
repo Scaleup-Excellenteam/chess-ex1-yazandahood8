@@ -12,3 +12,6 @@ bool Queen::areSquaresLegal(int /*srcRow*/, int /*srcCol*/, int destRow, int des
 bool Queen::isLegalMove(int destRow, int destCol, Piece* boardMove[8][8]) {
     return areSquaresLegal(row, col, destRow, destCol, boardMove);
 }
+sPiece *Queen::clone() const {
+    return new Queen(color,row,col);
+}
