@@ -1,8 +1,6 @@
 #include "Chess.h"
 #include <iostream>
 #include <string>
-#include <chrono>              
-#include <limits>    // for INT_MIN
 
 using namespace std;
 
@@ -201,11 +199,10 @@ bool Chess::isSame() const
 // check if the input is lockations at board
 bool Chess::isValid() const
 {
-	return (((('A' <= m_input[0]) && (m_input[0] <= 'H')) || (('a' <= m_input[0]) && (m_input[0] <= 'h'))) &&
-        (('1' <= m_input[1]) && (m_input[1] <= '8')) &&
-        ((('A' <= m_input[2]) && (m_input[2] <= 'H')) || (('a' <= m_input[2]) && (m_input[2] <= 'h'))) &&
-        (('1' <= m_input[3]) && (m_input[3] <= '8')));
-
+	return ((('A' <= m_input[0]) && (m_input[0] <= 'H')) || (('a' <= m_input[0]) && (m_input[0] <= 'h')) &&
+		(('1' <= m_input[1]) && (m_input[1] <= '8')) &&
+		(('A' <= m_input[2]) && (m_input[2] <= 'H')) || (('a' <= m_input[2]) && (m_input[2] <= 'h')) &&
+		(('1' <= m_input[3]) && (m_input[3] <= '8')));
 }
 	
 // check if the input is exit or quit  
@@ -282,7 +279,10 @@ Chess::Chess(const string& start)
 	setFrames();
 	setPieces();
 }
-
+void Chess::setBoard(const std::string &newBoard) {
+	m_boardString = newBoard;  // update the string-of-64
+	setPieces();               // rebuild the ASCII art grid (m_board)
+}
 // get the source and destination 
 string Chess::getInput()
 {
@@ -329,80 +329,4 @@ void Chess::setCodeResponse(int codeResponse)
 		((21 == codeResponse) || (codeResponse == 31)) ||
 		((41 == codeResponse) || (codeResponse == 42)))
 		m_codeResponse = codeResponse;
-}
-
-Move Chess::computeBestMoveForPiece(const Piece& p, int depth) {
-    Move bestMove;
-    int  bestScore = std::numeric_limits<int>::min();
-    auto candidates = generateMovesForPiece(p);
-    for (auto& m : candidates) {
-        // **early check**: if someone else already hit threshold, bail out
-        if (m_thresholdReached.load())
-            break;
-
-        int score = evaluateMove(m, depth);
-        if (score > bestScore) {
-            bestScore = score;
-            bestMove = m;
-        }
-        // **if this move crosses YOUR threshold**, signal everybody else
-        if (score >= m_scoreThreshold) {
-            m_thresholdReached.store(true);
-            break;
-        }
-    }
-    bestMove.score = bestScore;  // make sure your Move struct carries it
-    return bestMove;
-}
-
-
-void Chess::computeBestMoves(int depth, bool autoPlay, size_t numThreads, int scoreThreshold) {
-    // reset the flag & store the threshold
-    m_thresholdReached.store(false);
-    m_scoreThreshold = scoreThreshold;
-
-    ThreadPool pool(numThreads);
-    auto pieces = board.getPieces(m_turn);
-
-    for (size_t i = 0; i < pieces.size(); ++i) {
-        pool.enqueue([this, &pieces, i, depth]() {
-            // if someone already hit the threshold, skip entirely
-            if (m_thresholdReached.load()) 
-                return;
-
-            Move best = computeBestMoveForPiece(pieces[i], depth);
-
-            // after computing, if THIS move tops the threshold, set the flag
-            if (best.score >= m_scoreThreshold) {
-                m_thresholdReached.store(true);
-            }
-
-            // only push if we haven’t already exceeded—avoids flooding the queue
-            if (!m_thresholdReached.load() || best.score >= m_scoreThreshold) {
-                m_sharedQueue.push(best);
-            }
-        });
-    }
-
-    pool.shutdown();
-}
-
-
-void Chess::run(int depth, bool autoPlay, size_t numThreads) {
-    if (autoPlay) {
-        // benchmark / auto-play 8 moves
-        for (int i = 0; i < 8; ++i) {
-            computeBestMoves(depth, true, numThreads);
-            Move best = m_sharedQueue.poll();
-            applyMove(best);           // you’ll need a helper to mutate m_boardString
-        }
-    } else {
-        // manual play
-        while (true) {
-            string input = getInput();
-            if (input == "exit") break;
-            int code = GameValidator::validate(/*…*/);
-            setCodeResponse(code);
-        }
-    }
 }
