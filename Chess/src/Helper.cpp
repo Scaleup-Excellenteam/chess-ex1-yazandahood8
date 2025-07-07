@@ -241,7 +241,7 @@ int BoardUpdate(Board &board)
 vector<pair<int, string>> getBestMoves(string board, bool is_white, int Depth, int num_threads)
 {
     Board board1;
-    board1.getBoardByString(board);
+    board1.loadFromString(board);
     vector<string> LegalMovesVector = getLegalMoves(board1, is_white);
 
     PriorityQueue<pair<int, string>> priorityQueue;
@@ -255,7 +255,7 @@ vector<pair<int, string>> getBestMoves(string board, bool is_white, int Depth, i
         if (validation_result >= 41)
         {
             Board board3;
-            board3.getBoardByString(board2);
+            board3.loadFromString(board2);
             int s=100;
             bool f=!is_white;
             int score = Helper(board3, Depth, -score1 - s,score1 + s,f);
@@ -398,7 +398,7 @@ int Helper(Board &board, int Depth, int a, int b, bool maximizing)
                 continue;
 
             Board newBoard;
-            newBoard.getBoardByString(board2);
+            newBoard.loadFromString(board2);
 
             int eval = Helper(newBoard, Depth - 1, a, b, false);
             max_e = max(max_e, eval);
@@ -423,7 +423,7 @@ int Helper(Board &board, int Depth, int a, int b, bool maximizing)
                 continue;
 
             Board newBoard;
-            newBoard.getBoardByString(board2);
+            newBoard.loadFromString(board2);
 
             int eval = Helper(newBoard, Depth - 1, a, b, true);
             min_e = min(min_e, eval);

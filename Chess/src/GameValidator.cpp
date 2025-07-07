@@ -22,7 +22,7 @@ int validateMove(const std::string& move, std::string& board, bool isTurn, bool 
     int ColDestination = move[3] - num;
 
     Board board2;
-    board2.getBoardByString(board);
+    board2.loadFromString(board);
 
     // Check if source square has a piece
     Piece* srcPiece = board2.boardMove[RowSource][ColSource];

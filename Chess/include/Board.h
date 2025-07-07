@@ -16,7 +16,7 @@ public:
     ~Board();  // Destructor: responsible for deleting dynamically allocated pieces
 
     // Loads the board layout from a string representation (e.g., FEN-like or custom)
-    void getBoardByString(const std::string& boardString);
+    void loadFromString(const std::string& boardString);
 
     // Checks if a player of the given color can make a legal move
     // color: 'w' for white, 'b' for black

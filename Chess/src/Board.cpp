@@ -13,7 +13,7 @@ Board::~Board() {
             delete boardMove[i][j];
 }
 
-void Board::getBoardByString(const std::string& boardString) {
+void Board::loadFromString(const std::string& boardString) {
     if (boardString.size() != 64)
         return; 
 
