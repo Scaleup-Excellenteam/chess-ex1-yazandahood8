@@ -199,11 +199,10 @@ bool Chess::isSame() const
 // check if the input is lockations at board
 bool Chess::isValid() const
 {
-	return (((('A' <= m_input[0]) && (m_input[0] <= 'H')) || (('a' <= m_input[0]) && (m_input[0] <= 'h'))) &&
-        (('1' <= m_input[1]) && (m_input[1] <= '8')) &&
-        ((('A' <= m_input[2]) && (m_input[2] <= 'H')) || (('a' <= m_input[2]) && (m_input[2] <= 'h'))) &&
-        (('1' <= m_input[3]) && (m_input[3] <= '8')));
-
+	return ((('A' <= m_input[0]) && (m_input[0] <= 'H')) || (('a' <= m_input[0]) && (m_input[0] <= 'h')) &&
+		(('1' <= m_input[1]) && (m_input[1] <= '8')) &&
+		(('A' <= m_input[2]) && (m_input[2] <= 'H')) || (('a' <= m_input[2]) && (m_input[2] <= 'h')) &&
+		(('1' <= m_input[3]) && (m_input[3] <= '8')));
 }
 	
 // check if the input is exit or quit  
@@ -280,7 +279,10 @@ Chess::Chess(const string& start)
 	setFrames();
 	setPieces();
 }
-
+void Chess::setBoard(const std::string &newBoard) {
+	m_boardString = newBoard;  // update the string-of-64
+	setPieces();               // rebuild the ASCII art grid (m_board)
+}
 // get the source and destination 
 string Chess::getInput()
 {

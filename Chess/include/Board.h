@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include "Piece.h"
 #include "Rook.h"
 #include "King.h"
@@ -8,42 +7,28 @@
 #include "Bishop.h"
 #include "Knight.h"
 #include "Pawn.h"
-
 #include <string>
-#include "PriorityQueue.h"
-#include "Exception.h"
-#include <vector>
-struct Move {
-    int fromRow, fromCol, toRow, toCol, score;
-    Move(int fr, int fc, int tr, int tc, int s)
-        : fromRow(fr), fromCol(fc), toRow(tr), toCol(tc), score(s) {}
-    
-    friend std::ostream& operator<<(std::ostream& os, const Move& m) {
-        os << static_cast<char>('a' + m.fromRow) << (m.fromCol + 1)
-           << " -> " << static_cast<char>('a' + m.toRow) << (m.toCol + 1)
-           << " [Score: " << m.score << "]";
-        return os;
-    }
-};
 
-struct MoveComparator {
-    int operator()(const Move& a, const Move& b) const {
-        return a.score - b.score;
-    }
-};
+// The Board class manages an 8x8 chess board and its pieces.
 class Board {
 public:
-    Board();
-    ~Board();
-    void suggestBestMove(bool isWhiteTurn, int depth);
+    Board();   // Constructor: initializes the board with pieces (default or empty)
+    ~Board();  // Destructor: responsible for deleting dynamically allocated pieces
 
+    // Loads the board layout from a string representation (e.g., FEN-like or custom)
     void loadFromString(const std::string& boardString);
+
+    // Checks if a player of the given color can make a legal move
+    // color: 'w' for white, 'b' for black
+    bool canMove(char color);
+
+    // 2D array holding pointers to the pieces on the board; nullptr means empty square
+    Piece* boardMove[8][8];
+
+    // Returns the current board state as a string (for saving or display)
     std::string getBoardString() const;
 
-    Piece* const* const* getRawBoard() const;
-
-    std::unique_ptr<Piece> boardMove[8][8];
-
+    // Disable copy constructor and copy assignment to prevent accidental copies
     Board(const Board&) = delete;
     Board& operator=(const Board&) = delete;
 };
