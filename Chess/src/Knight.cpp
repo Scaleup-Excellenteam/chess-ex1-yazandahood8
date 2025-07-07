@@ -1,9 +1,17 @@
 #include "Knight.h"
 #include <cmath>
 
-// first time i know somthing like this Piece* /*board*/
-bool Knight::isLegalMove(int destRow, int destCol, Piece* /*board*/[8][8]) {
-    int dRow = std::abs(destRow - row);
-    int dCol = std::abs(destCol - col);
-    return (dRow == 2 && dCol == 1) || (dRow == 1 && dCol == 2);
+// Checks if a knight move is legal.
+// Knights move in an "L" shape: two squares in one direction, then one square perpendicular.
+// Parameters:
+//   RowSource, ColSource           - starting square (0-7)
+//   RowDestination, ColDestination - target square (0-7)
+//   boardMove                      - current board state (not needed for basic knight movement)
+// Returns:
+//   true if the move is a legal knight jump; false otherwise
+bool Knight::CheckLegalMove(int RowSource, int ColSource, int RowDestination, int ColDestination, Piece* /*boardMove*/[8][8]) {
+    int rowDiff = std::abs(RowDestination - RowSource);
+    int colDiff = std::abs(ColDestination - ColSource);
+    // Legal knight move: "L" shape (2 by 1 or 1 by 2)
+    return (rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2);
 }

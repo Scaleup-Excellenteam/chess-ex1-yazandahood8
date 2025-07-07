@@ -1,25 +1,9 @@
 #include "Bishop.h"
-#include <cmath>  
+#include "MoveValidator.h"
 
-bool Bishop::isLegalMove(int destRow, int destCol, Piece* board[8][8]) {
-    int srcRow = getRow();
-    int srcCol = getCol();
-
-    if (std::abs(destRow - srcRow) != std::abs(destCol - srcCol))
-        return false;
-
-    int rowOffset = (destRow > srcRow) ? 1 : -1;
-    int colOffset = (destCol > srcCol) ? 1 : -1;
-
-    int checkRow = srcRow + rowOffset;
-    int checkCol = srcCol + colOffset;
-
-    while (checkRow != destRow || checkCol != destCol) {
-        if (board[checkRow][checkCol] != nullptr)
-            return false;
-        checkRow += rowOffset;
-        checkCol += colOffset;
-    }
-
-    return true;
+// Checks if a bishop move from (RowSource, ColSource) to (RowDestination, ColDestination) is legal.
+// Delegates the path checking to MoveValidator::CheckBishopPath, which ensures the path is unobstructed
+// and follows diagonal movement rules.
+bool Bishop::CheckLegalMove(int RowSource, int ColSource, int RowDestination, int ColDestination, Piece* boardMove[8][8]) {
+    return MoveValidator::CheckBishopPath(RowSource, ColSource, RowDestination, ColDestination, boardMove);
 }

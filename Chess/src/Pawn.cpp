@@ -1,33 +1,88 @@
+// In Pawn.cpp
 #include "Pawn.h"
 #include <cmath>
-bool Pawn::isLegalMove(int destRow, int destCol, Piece* board[8][8]) {
-    return areSquaresLegal(row, col, destRow, destCol, board);
-}
-bool Pawn::areSquaresLegal(int srcRow, int srcCol, int destRow, int destCol, Piece* boardMove[8][8]) {
-    if (destRow < 0 || destRow >= 8 || destCol < 0 || destCol >= 8)
-        return false;
+#include <iostream>
+#include "Queen.h"
+#include "Rook.h"
+#include "Bishop.h"
+#include "Knight.h"
+#include "Exceptions.h"
 
-    int direction = isWhite ? 1 : -1;
-    int startRow = isWhite ? 1 : 6;
+// Checks if a pawn move is legal (standard chess, excluding en passant).
+// Handles forward movement (1 or 2 squares), captures, and starting rank logic.
+// Parameters:
+//   RowSource, ColSource          - starting square (0-7)
+//   RowDestination, ColDestination- target square (0-7)
+//   board                     - current board state
+// Returns:
+//   true if the move is legal for a pawn; false otherwise
+bool Pawn::CheckLegalMove(int RowSource, int ColSource, int RowDestination, int ColDestination, Piece *board[8][8])
+{
+    int d;   // Direction the pawn moves (white: -1, black: +1)
+    int row; // Row where pawn starts (white: 6, black: 1)
 
-    if (srcCol == destCol) {
-        // One step forward
-        if (destRow == srcRow + direction && boardMove[destRow][destCol] == nullptr)
+    if (isWhite)
+    { // White pawns move "up" (decreasing row)
+        d = -1;
+        row = 6;
+    }
+    else
+    { // Black pawns move "down" (increasing row)
+        d = 1;
+        row = 1;
+    }
+    // Capture: move diagonally by one square, must take opponent's piece
+    int x=std::abs(ColDestination - ColSource);
+    if (x == 1 && RowDestination == RowSource + d)
+    {
+        if (board[RowDestination][ColDestination] != nullptr &&
+            board[RowDestination][ColDestination]->getColor() != this->isWhite)
+        {
             return true;
-
-        // First move: two steps forward
-        if (srcRow == startRow &&
-            destRow == srcRow + 2 * direction &&
-            boardMove[srcRow + direction][srcCol] == nullptr &&
-            boardMove[destRow][destCol] == nullptr)
-            return true;
+        }
     }
 
-    if (std::abs(destCol - srcCol) == 1 &&
-        destRow == srcRow + direction &&
-        boardMove[destRow][destCol] != nullptr &&
-        boardMove[destRow][destCol]->getColor() != isWhite)
-        return true;
+    // Normal forward move (1 square), only if destination is empty
+    if (ColSource == ColDestination)
+    {
+        if (RowDestination == RowSource + d && board[RowDestination][ColDestination] == nullptr)
+        {
+            return true;
+        }
+        // Two-square move from starting position, both squares must be empty
+        if (RowSource == row && RowDestination == RowSource + 2 * d)
+            if (board[RowSource + d][ColDestination] == nullptr &&
+                board[RowDestination][ColDestination] == nullptr)
+            {
+                return true;
+            }
+    }
 
     return false;
+}
+
+// Promotes a pawn to the specified piece type (Queen, Rook, Bishop, or Knight).
+// Throws IllegalException if the requested piece is invalid.
+Piece *Pawn::Update(char UpdateTo, bool color)
+{
+    if (UpdateTo == 'Q' || UpdateTo == 'q')
+    {
+        return new Queen(color);
+    }
+    else if (UpdateTo == 'R' || UpdateTo == 'r')
+    {
+        return new Rook(color);
+    }
+    else if (UpdateTo == 'B' || UpdateTo == 'b')
+    {
+        return new Bishop(color);
+    }
+    else if (UpdateTo == 'N' || UpdateTo == 'n')
+    {
+        return new Knight(color);
+    }
+    else
+    {
+        throw IllegalException("Invalid promotion piece.");
+    }
 }
